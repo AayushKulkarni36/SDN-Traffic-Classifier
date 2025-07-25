@@ -10,7 +10,7 @@ A machine learning-based traffic classification system for **Software-Defined Ne
 - ✅ Supports flow feature extraction: packets, bytes, duration, protocol (both directions)
 - ✅ ML-based classification using Random Forest
 - ✅ Traffic logging into a local SQLite database
-- ✅ Flask + Plotly dashboard for real-time flow visualization
+- ✅ Flask  dashboard for real-time flow visualization
 - ✅ Blocks malicious traffic (`malware`, `botnet`, `telnet`, etc.) using flow rules
 - ✅ Docker-ready architecture (coming soon)
 
@@ -71,7 +71,7 @@ pip install -r requirements.txt
 
 - 📊 **Model:** Random Forest Classifier (trained on 16 flow-level features)
 - 🗂️ **Features:** Packet Count, Byte Count, Duration, Protocol (both directions), PPS, BPS, etc.
-- 🧪 **Dataset:** `refined_traffic_dataset.csv`
+- 🧪 **Dataset:** `balanced_dataset.csv`
 - 🧠 **Trained model:** `refined_model_random_forest.joblib`
 
 ---
@@ -110,7 +110,7 @@ Access it at: [http://localhost:5000](http://localhost:5000)
 ## 📊 Dashboard Preview
 
 - View real-time classified flows
-- Visualize classes: Normal, Botnet, Malware, Telnet, etc.
+- Visualize classes: Ping, Game ,Dns ,Ssh_attack, Botnet, Malware, Telnet, etc.
 - Includes timestamps, flow keys, and protocol details
 
 ---
