@@ -1,4 +1,6 @@
 # SDN Traffic Classification System (Dockerized)
+<img width="1000" height="746" alt="Software-Defined-Networking" src="https://github.com/user-attachments/assets/843ec614-3d84-4886-8b49-160abd63b4b2" />
+
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.9-blue.svg)
@@ -77,11 +79,8 @@ A Dockerized Software-Defined Networking (SDN) project that integrates the Ryu S
 │   ├── new
 │   ├── OLD
 │   └── update_schema.py
-├── Software-Defined-Networking.png
-└── topology
-    └── custom_topo.py
 
-29 directories, 31 files
+27 directories, 30 files
 
 ```
 
