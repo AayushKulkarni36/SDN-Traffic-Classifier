@@ -21,29 +21,68 @@ A Dockerized Software-Defined Networking (SDN) project that integrates the Ryu S
 ## 📁 Project Structure
 
 ```bash
-sdn-traffic-classifier/
-├── ryu_controller/
-│   └── ml_controller.py         # Main Ryu app with ML integration
-│
-├── dashboard/
-│   ├── app.py                   # Flask dashboard backend
-│   └── templates/
-│       ├── index.html
-│       └── logs.html
-│
-├── database/
-│   ├── flow_logs.db             # SQLite database
-│   ├── schema.sql               # SQL schema for logs
-│   └── init_db.py               # Initialization script
-│
-├── model_evaluation/
-│   ├── refined_model_random_forest.joblib
-│   └── refined_scaler.joblib
-│
-├── docker-compose.yml          # Docker Compose config
-├── Dockerfile                  # Builds Ryu + ML environment
-├── requirements.txt            # Python dependencies
-└── README.md                   # This file
+├── confusion_matrix.png
+├── dashboard
+│   ├── app.py
+│   └── templates
+├── database
+│   ├── flow_logs.db
+│   ├── init_db.py
+│   ├── ml_controller.py
+│   ├── model_evaluation
+│   ├── __pycache__
+│   ├── requirements.txt
+│   ├── schema.sql
+│   └── utils
+├── datasets
+│   ├── dns_training_data.csv
+│   ├── game_training_data.csv
+│   ├── models_all
+│   ├── models_dns
+│   ├── models_game
+│   ├── models_ping
+│   ├── models_telnet
+│   ├── models_voice
+│   ├── ping_training_data.csv
+│   ├── telnet_training_data.csv
+│   └── voice_training_data.csv
+├── Dockerfile
+├── feature_importances.png
+├── fix_flow_logs_schema.py
+├── LICENSE
+├── mininet -> /usr/lib/python3/dist-packages/mininet
+├── ml-venv-py39
+│   ├── bin
+│   ├── etc
+│   ├── include
+│   ├── lib
+│   ├── lib64 -> lib
+│   ├── pyvenv.cfg
+│   └── share
+├── model_evaluation
+│   ├── balanced_dataset.csv
+│   ├── benchmark_models.py
+│   ├── confusion_matrix_decision_tree.png
+│   ├── confusion_matrix_knn.png
+│   ├── confusion_matrix_naive_bayes.png
+│   ├── confusion_matrix.png
+│   ├── confusion_matrix_random_forest.png
+│   └── model_comparison.csv
+├── pcap
+│   └── iperf3_h1_h2.json
+├── README.md
+├── ryu_controller
+│   └── __pycache__
+├── scripts
+│   ├── new
+│   ├── OLD
+│   └── update_schema.py
+├── Software-Defined-Networking.png
+└── topology
+    └── custom_topo.py
+
+29 directories, 31 files
+
 ```
 
 ---
