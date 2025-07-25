@@ -1,142 +1,131 @@
-# 🧠 SDN Traffic Classifier
+# SDN Traffic Classification System (Dockerized)
 
-A machine learning-based traffic classification system for **Software-Defined Networking (SDN)** using **Ryu**, **Mininet**, and **Flask**. The system classifies network flows in real-time using a trained Random Forest model and logs results into a SQLite database, which are visualized via an interactive dashboard.
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.9-blue.svg)
+![Docker](https://img.shields.io/badge/docker-ready-green.svg)
+
+A Dockerized Software-Defined Networking (SDN) project that integrates the Ryu SDN controller, a machine learning-based traffic classification engine, and a Flask + Plotly dashboard for real-time traffic monitoring. Flow data is logged into a SQLite database and visualized through a web interface.
 
 ---
 
-## 🚀 Features
+## 🧠 Features
 
-- ✅ Real-time traffic classification in SDN using Ryu controller
-- ✅ Supports flow feature extraction: packets, bytes, duration, protocol (both directions)
-- ✅ ML-based classification using Random Forest
-- ✅ Traffic logging into a local SQLite database
-- ✅ Flask  dashboard for real-time flow visualization
-- ✅ Blocks malicious traffic (`malware`, `botnet`, `telnet`, etc.) using flow rules
-- ✅ Docker-ready architecture (coming soon)
+- 🔌 **Ryu SDN Controller** with ML-based flow classification
+- 📊 **Flask + Plotly Dashboard** for live monitoring
+- 🗃️ **SQLite Database** to store classified flows
+- 🐳 **Dockerized** for seamless deployment
+- 🧪 Supports ICMP, TCP, UDP traffic simulations via Mininet
 
 ---
 
 ## 📁 Project Structure
 
-```
+```bash
 sdn-traffic-classifier/
-├── ryu_controller/           # Ryu controller with ML classification
-│   └── ml_controller.py
+├── ryu_controller/
+│   └── ml_controller.py         # Main Ryu app with ML integration
 │
-├── scripts/new/              # Dataset + traffic generation
-│   ├── generate_mixed_traffic.py
-│   └── refined_traffic_dataset.csv
+├── dashboard/
+│   ├── app.py                   # Flask dashboard backend
+│   └── templates/
+│       ├── index.html
+│       └── logs.html
 │
-├── model_evaluation/         # Trained Random Forest model + scaler
+├── database/
+│   ├── flow_logs.db             # SQLite database
+│   ├── schema.sql               # SQL schema for logs
+│   └── init_db.py               # Initialization script
+│
+├── model_evaluation/
 │   ├── refined_model_random_forest.joblib
-│   ├── refined_scaler.joblib
-│   └── feature_list_refined.csv
+│   └── refined_scaler.joblib
 │
-├── dashboard/                # Flask + Plotly web dashboard
-│   ├── app.py
-│   └── templates/index.html
-│
-├── database/                 # SQLite DB (created at runtime)
-│   └── flow_logs.db
-│
-├── Dockerfile                # Docker setup (TBD)
-├── requirements.txt          # Python dependencies
-├── .gitignore
-├── LICENSE                   # MIT License
-└── README.md
+├── docker-compose.yml          # Docker Compose config
+├── Dockerfile                  # Builds Ryu + ML environment
+├── requirements.txt            # Python dependencies
+└── README.md                   # This file
 ```
 
 ---
 
-## 🔧 Installation
+## 🚀 Getting Started
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/AayushKulkarni36/SDN-Traffic-Classifier.git
-cd SDN-Traffic-Classifier
+git clone https://github.com/your-username/sdn-traffic-classifier.git
+cd sdn-traffic-classifier
 ```
 
-### 2. Create Virtual Environment (optional but recommended)
+### 2. Initialize the SQLite Database
 
 ```bash
-python3 -m venv ml-venv-py39
-source ml-venv-py39/bin/activate
-pip install -r requirements.txt
+docker-compose run --rm ryu python3 database/init_db.py
 ```
 
----
-
-## 🧠 ML Model Information
-
-- 📊 **Model:** Random Forest Classifier (trained on 16 flow-level features)
-- 🗂️ **Features:** Packet Count, Byte Count, Duration, Protocol (both directions), PPS, BPS, etc.
-- 🧪 **Dataset:** `balanced_dataset.csv`
-- 🧠 **Trained model:** `refined_model_random_forest.joblib`
-
----
-
-## ⚙️ How to Use
-
-### 1. Start the Ryu Controller
+### 3. Build and Launch the Stack
 
 ```bash
-ryu-manager ryu_controller/ml_controller.py
+docker-compose up --build
 ```
 
-### 2. Start Mininet with Custom Topology
+- The **Ryu ML Controller** will start inside a Docker container.
+- The **Dashboard** will be accessible at: [http://localhost:5005](http://localhost:5005)
+
+---
+
+## 🧪 Test with Mininet
+
+In a separate terminal:
 
 ```bash
-sudo mn --custom topology/custom_topo.py --topo mytopo --controller=remote
+sudo mn --controller=remote,ip=127.0.0.1 --topo single,3
 ```
 
-### 3. Generate Traffic
+Then generate traffic using:
 
 ```bash
-python3 scripts/new/generate_mixed_traffic.py
+ping, iperf, hping3, or custom scripts
 ```
 
-### 4. Launch the Flask Dashboard
+---
+
+## 📊 Dashboard Routes
+
+| Route      | Description                          |
+|------------|--------------------------------------|
+| `/`        | Live view of recent flow logs        |
+| `/logs`    | Full historical logs from SQLite     |
+
+---
+
+## 🐳 Optional: Manual Docker Build
 
 ```bash
-cd dashboard
-python3 app.py
+docker build -t sdn-ryu .
 ```
 
-Access it at: [http://localhost:5000](http://localhost:5000)
+---
+
+## 🧹 Tear Down
+
+```bash
+docker-compose down
+```
 
 ---
 
-## 📊 Dashboard Preview
+## 👤 Author
 
-- View real-time classified flows
-- Visualize classes: Ping, Game ,Dns ,Ssh_attack, Botnet, Malware, Telnet, etc.
-- Includes timestamps, flow keys, and protocol details
-
----
-
-## 🐳 Docker (coming soon)
-
-We'll soon include:
-- `Dockerfile` for Ryu controller
-- `docker-compose` for dashboard + controller
-- Lightweight build for development or deployment
+**Aayush Kulkarni**  
+[LinkedIn](https://www.linkedin.com/) • [GitHub](https://github.com/your-username)
 
 ---
 
-## 🪪 License
+## 📄 License
 
-This project is licensed under the MIT License.  
-See [`LICENSE`](LICENSE) file for details.
+This project is licensed under the MIT License.
 
----
-
-## 🙋 Author
-
-- **Aayush Kulkarni**
-- GitHub: [@AayushKulkarni36](https://github.com/AayushKulkarni36)
-
----
 
 ## 💬 Contributing
 
