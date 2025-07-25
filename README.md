@@ -153,6 +153,10 @@ docker-compose down
 
 ---
 
+## DashBoard ScreenShot:
+<img width="1920" height="1001" alt="Screenshot from 2025-07-25 20-42-29" src="https://github.com/user-attachments/assets/9de5dd72-f456-4025-b7ad-56fd00dc3d6c" />
+
+
 ## 👤 Author
 
 **Aayush Kulkarni**  
