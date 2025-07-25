@@ -3,9 +3,9 @@ import os
 
 class TrafficClassifier:
     def __init__(self,
-                 model_path='model_evaluation/refined_model_random_forest.joblib',
-                 scaler_path='model_evaluation/refined_scaler.joblib',
-                 feature_list_path='model_evaluation/feature_list_refined.csv'):
+                 model_path='/app/model_evaluation/refined_model_random_forest.joblib',
+                 scaler_path = "/app/model_evaluation/refined_scaler.joblib",
+                 feature_list_path='/app/model_evaluation/feature_list_refined.csv'):
 
         if not os.path.exists(model_path):
             raise FileNotFoundError(f"Model not found at: {model_path}")

@@ -10,10 +10,11 @@ import os
 from datetime import datetime
 from threading import Timer
 from utils.ml_model_loader import TrafficClassifier
+from ryu.lib.packet import tcp, udp
 classifier = TrafficClassifier(
-    model_path='/home/aayush/sdn-traffic-classifier/model_evaluation/refined_model_random_forest.joblib',
-    scaler_path='/home/aayush/sdn-traffic-classifier/model_evaluation/refined_scaler.joblib',
-    feature_list_path='model_evaluation/feature_list_refined.csv'
+    model_path='/app/model_evaluation/refined_model_random_forest.joblib',
+    scaler_path='/app/model_evaluation/refined_scaler.joblib',
+    feature_list_path='/app/model_evaluation/feature_list_refined.csv'
 )
 
 class MLTrafficController(app_manager.RyuApp):
@@ -23,7 +24,7 @@ class MLTrafficController(app_manager.RyuApp):
         super(MLTrafficController, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
         self.flow_stats = {}
-        self.db_path = '/home/aayush/sdn-traffic-classifier/database/flow_logs.db'
+        self.db_path = '/app/database/flow_logs.db'
         self._init_db()
 
     def _init_db(self):
@@ -34,6 +35,8 @@ class MLTrafficController(app_manager.RyuApp):
             CREATE TABLE IF NOT EXISTS flow_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT,
+                       
+                       
             src_ip TEXT,
             dst_ip TEXT,
             protocol INTEGER,
@@ -62,7 +65,8 @@ class MLTrafficController(app_manager.RyuApp):
         parser = datapath.ofproto_parser
         ofproto = datapath.ofproto
         match = parser.OFPMatch()
-        actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER, ofproto.OFPCML_NO_BUFFER)]
+        actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER, 0xffff)]
+
         self.add_flow(datapath, 0, match, actions)
 
     def add_flow(self, datapath, priority, match, actions, buffer_id=None):
@@ -75,10 +79,13 @@ class MLTrafficController(app_manager.RyuApp):
         )
         datapath.send_msg(mod)
 
-    def log_flow_later(self, flow_key, rev_flow_key, features, src_ip, dst_ip, proto, traffic_type):
-        Timer(2.0, self._delayed_log, args=(flow_key, rev_flow_key, features, src_ip, dst_ip, proto, traffic_type)).start()
+    def log_flow_later(self, flow_key, rev_flow_key, features, src_ip, dst_ip, src_port, dst_port, proto, traffic_type):
 
-    def _delayed_log(self, flow_key, rev_flow_key, features, src_ip, dst_ip, proto, traffic_type):
+        Timer(2.0, self._delayed_log, args=(flow_key, rev_flow_key, features, src_ip, dst_ip, src_port, dst_port, proto, traffic_type)).start()
+
+
+    def _delayed_log(self, flow_key, rev_flow_key, features, src_ip, dst_ip, src_port, dst_port, proto, traffic_type):
+
         now = time.time()
         rev_stats = self.flow_stats.get(rev_flow_key, {})
         if rev_flow_key in self.flow_stats:
@@ -118,22 +125,24 @@ class MLTrafficController(app_manager.RyuApp):
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         cursor.execute('''
-            INSERT INTO flow_logs (
+                INSERT INTO flow_logs (
                 timestamp, src_ip, dst_ip, protocol,
+                src_port, dst_port,
                 fwd_pkts, fwd_bytes, fwd_pps, fwd_bps,
                 rev_pkts, rev_bytes, rev_pps, rev_bps,
                 duration, prediction
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-            timestamp, src_ip, dst_ip, proto,
-            features['Forward Packets'], features['Forward Bytes'],
-            features['Forward Instantaneous Packets per Second'],
-            features['Forward Average Bytes per second'],
-            features['Reverse Packets'], features['Reverse Bytes'],
-            features['Reverse Average Packets per second'],
-            features['Reverse Instantaneous Bytes per Second'],
-            features['Duration'], traffic_type
-            ))
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+    timestamp, src_ip, dst_ip, proto,
+    src_port, dst_port,
+    features['Forward Packets'], features['Forward Bytes'],
+    features['Forward Instantaneous Packets per Second'],
+    features['Forward Average Bytes per second'],
+    features['Reverse Packets'], features['Reverse Bytes'],
+    features['Reverse Average Packets per second'],
+    features['Reverse Instantaneous Bytes per Second'],
+    features['Duration'], traffic_type
+))
         conn.commit()
         print(f"[DB] Logged flow from {src_ip} to {dst_ip} as {traffic_type}")
         conn.close()
@@ -157,13 +166,23 @@ class MLTrafficController(app_manager.RyuApp):
         src_ip, dst_ip = ip_pkt.src, ip_pkt.dst
         proto = ip_pkt.proto
         ip_proto = ip_pkt.proto
-        src_port = dst_port = 0
+        src_port = dst_port=0
 
-        for p in pkt.protocols:
-            if hasattr(p, 'src_port') and hasattr(p, 'dst_port'):
-                src_port = p.src_port
-                dst_port = p.dst_port
-                break
+        if proto == 6:
+            tcp_pkt = pkt.get_protocol(tcp.tcp)
+            self.logger.info(f"TCP packet: {tcp_pkt}")
+            if tcp_pkt:
+                src_port = tcp_pkt.src_port
+                dst_port = tcp_pkt.dst_port
+                self.logger.info(f"TCP ports: {src_port} -> {dst_port}")
+
+        elif proto == 17:
+            udp_pkt = pkt.get_protocol(udp.udp)
+            self.logger.info(f"UDP packet: {udp_pkt}")
+            if udp_pkt:
+                src_port = udp_pkt.src_port
+                dst_port = udp_pkt.dst_port
+                self.logger.info(f"UDP ports: {src_port} -> {dst_port}")
 
         flow_key = (src_ip, dst_ip, src_port, dst_port, ip_proto)
         reverse_flow_key = (dst_ip, src_ip, dst_port, src_port, ip_proto)
@@ -215,7 +234,7 @@ class MLTrafficController(app_manager.RyuApp):
         }
 
         try:
-            self.log_flow_later(flow_key, reverse_flow_key, features, src_ip, dst_ip, proto, 'unknown')
+            self.log_flow_later(flow_key, reverse_flow_key, features, src_ip, dst_ip, src_port, dst_port, proto, 'unknown')
         except Exception as e:
             self.logger.error(f"[ERROR] Logging setup failed: {e}")
 

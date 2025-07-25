@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS flow_predictions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp TEXT NOT NULL,
-    src_ip TEXT NOT NULL,
-    dst_ip TEXT NOT NULL,
+    src_ip INTEGER NOT NULL,
+    dst_ip INTEGER NOT NULL,
     protocol INTEGER,
     forward_packets INTEGER,
     forward_bytes INTEGER,
