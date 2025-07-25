@@ -1,0 +1,27 @@
+# Bytecode and cache
+__pycache__/
+*.py[cod]
+*.log
+
+# Virtual environments
+ml-venv-py39/
+venv/
+.env/
+
+# Databases
+*.db
+
+# Model files
+*.joblib
+
+# Dataset files
+*.csv
+*.pcap
+
+# System files
+.DS_Store
+*.swp
+
+# IDE/editor configs
+.vscode/
+.idea/

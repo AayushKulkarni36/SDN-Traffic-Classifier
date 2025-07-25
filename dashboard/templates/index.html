@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SDN Traffic Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 20px 40px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-weight: 600;
+        }
+        .table-container {
+            padding: 30px 40px;
+        }
+        table {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th {
+            background-color: #1e40af;
+            color: white;
+            font-weight: 500;
+        }
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        td, th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .tag-benign {
+            background-color: #dcfce7;
+            color: #166534;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .tag-malware {
+            background-color: #fee2e2;
+            color: #991b1b;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .tag-botnet {
+            background-color: #fef9c3;
+            color: #78350f;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SDN Traffic Flow Logs Dashboard</h1>
+    </header>
+
+    <div class="table-container">
+        <!-- 🔍 Search Box -->
+        <div class="mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search flows...">
+        </div>
+
+        <div class="table-wrapper">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Src IP</th>
+                        <th>Dst IP</th>
+                        <th>Proto</th>
+                        <th>Src Port</th>
+                        <th>Dst Port</th>
+                        <th>Fwd Pkts</th>
+                        <th>Fwd Bytes</th>
+                        <th>Rev Pkts</th>
+                        <th>Rev Bytes</th>
+                        <th>Duration</th>
+                        <th>Prediction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr>
+                        {% for item in row[:-1] %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                        <td>
+                            {% if row[-1]|lower == 'benign' %}
+                                <span class="tag-benign">{{ row[-1] }}</span>
+                            {% elif row[-1]|lower == 'malware' %}
+                                <span class="tag-malware">{{ row[-1] }}</span>
+                            {% elif row[-1]|lower == 'botnet' %}
+                                <span class="tag-botnet">{{ row[-1] }}</span>
+                            {% else %}
+                                {{ row[-1] }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ✅ JavaScript to enable live search -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keyup', function () {
+                const filter = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const text = row.innerText.toLowerCase();
+                    row.style.display = text.includes(filter) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
