@@ -177,4 +177,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ##  Show Your Support
 
-If you found this project helpful, consider starring ⭐ the repository on GitHub. It motivates me to keep improving it!
+If you found this project helpful, consider starring  the repository on GitHub. It motivates me to keep improving it!
