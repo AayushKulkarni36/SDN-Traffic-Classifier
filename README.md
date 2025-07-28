@@ -10,17 +10,17 @@ A Dockerized Software-Defined Networking (SDN) project that integrates the Ryu S
 
 ---
 
-## 🧠 Features
+##  Features
 
-- 🔌 **Ryu SDN Controller** with ML-based flow classification
-- 📊 **Flask + Plotly Dashboard** for live monitoring
-- 🗃️ **SQLite Database** to store classified flows
-- 🐳 **Dockerized** for seamless deployment
-- 🧪 Supports ICMP, TCP, UDP traffic simulations via Mininet
+-  **Ryu SDN Controller** with ML-based flow classification
+-  **Flask + Plotly Dashboard** for live monitoring
+-  **SQLite Database** to store classified flows
+-  **Dockerized** for seamless deployment
+-  Supports ICMP, TCP, UDP traffic simulations via Mininet
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```bash
 ├── confusion_matrix.png
@@ -86,7 +86,7 @@ A Dockerized Software-Defined Networking (SDN) project that integrates the Ryu S
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Clone the Repository
 
@@ -112,7 +112,7 @@ docker-compose up --build
 
 ---
 
-## 🧪 Test with Mininet
+##  Test with Mininet
 
 In a separate terminal:
 
@@ -128,7 +128,7 @@ ping, iperf, hping3, or custom scripts
 
 ---
 
-## 📊 Dashboard Routes
+##  Dashboard Routes
 
 | Route      | Description                          |
 |------------|--------------------------------------|
@@ -145,7 +145,7 @@ docker build -t sdn-ryu .
 
 ---
 
-## 🧹 Tear Down
+##  Tear Down
 
 ```bash
 docker-compose down
@@ -157,24 +157,24 @@ docker-compose down
 <img width="1920" height="1001" alt="Screenshot from 2025-07-25 20-42-29" src="https://github.com/user-attachments/assets/9de5dd72-f456-4025-b7ad-56fd00dc3d6c" />
 
 
-## 👤 Author
+##  Author
 
 **Aayush Kulkarni**  
 [LinkedIn](https://www.linkedin.com/) • [GitHub](https://github.com/your-username)
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License.
 
 
-## 💬 Contributing
+##  Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change or improve.
 
 ---
 
-## ⭐️ Show Your Support
+##  Show Your Support
 
 If you found this project helpful, consider starring ⭐ the repository on GitHub. It motivates me to keep improving it!
